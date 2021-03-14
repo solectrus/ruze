@@ -1,0 +1,25 @@
+AllCops:
+  TargetRubyVersion: 2.7
+  NewCops: enable
+  SuggestExtensions: false
+
+Metrics/MethodLength:
+  Max: 20
+
+Metrics/BlockLength:
+  Max: 90
+
+Metrics/AbcSize:
+  Max: 18
+
+Layout/LineLength:
+  Max: 170
+
+Layout/HashAlignment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
