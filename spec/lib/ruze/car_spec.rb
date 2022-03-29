@@ -37,25 +37,25 @@ RSpec.describe Ruze::Car do
     let(:password) { 'foobarbaz' }
 
     describe :battery do
-      subject { -> { car.battery } }
+      subject { car.battery }
 
       it { fails }
     end
 
     describe :cockpit do
-      subject { -> { car.cockpit } }
+      subject { car.cockpit }
 
       it { fails }
     end
 
     describe :location do
-      subject { -> { car.location } }
+      subject { car.location }
 
       it { fails }
     end
 
     def fails
-      is_expected.to raise_error(Ruze::Error, 'Error in session_cookie_value: invalid loginID or password')
+      expect { subject }.to raise_error(Ruze::Error, 'Error in session_cookie_value: invalid loginID or password')
     end
   end
 
@@ -64,25 +64,25 @@ RSpec.describe Ruze::Car do
     let(:password) { nil }
 
     describe :battery do
-      subject { -> { car.battery } }
+      subject { car.battery }
 
       it { fails }
     end
 
     describe :cockpit do
-      subject { -> { car.cockpit } }
+      subject { car.cockpit }
 
       it { fails }
     end
 
     describe :location do
-      subject { -> { car.location } }
+      subject { car.location }
 
       it { fails }
     end
 
     def fails
-      is_expected.to raise_error(ArgumentError)
+      expect { subject }.to raise_error(ArgumentError)
     end
   end
 end

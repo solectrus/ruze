@@ -81,37 +81,37 @@ RSpec.describe Ruze::Kamereon do
     let(:gigya_token) { 'this-is-not-a-token' }
 
     describe :account_id do
-      subject { -> { kamereon.account_id } }
+      subject { kamereon.account_id }
 
       it { fails }
     end
 
     describe :vehicles do
-      subject { -> { kamereon.vehicles } }
+      subject { kamereon.vehicles }
 
       it { fails }
     end
 
     describe :vin do
-      subject { -> { kamereon.vin } }
+      subject { kamereon.vin }
 
       it { fails }
     end
 
     describe :battery do
-      subject { -> { kamereon.battery } }
+      subject { kamereon.battery }
 
       it { fails }
     end
 
     describe :cockpit do
-      subject { -> { kamereon.cockpit } }
+      subject { kamereon.cockpit }
 
       it { fails }
     end
 
     def fails
-      is_expected.to raise_error(Ruze::Error, 'Error in accounts: Unauthorized (401)')
+      expect { subject }.to raise_error(Ruze::Error, 'Error in accounts: Unauthorized (401)')
     end
   end
 end

@@ -29,25 +29,25 @@ RSpec.describe Ruze::Gigya do
     let(:password) { 'foobarbaz' }
 
     describe :jwt do
-      subject { -> { gigya.jwt } }
+      subject { gigya.jwt }
 
       it { fails }
     end
 
     describe :person_id do
-      subject { -> { gigya.person_id } }
+      subject { gigya.person_id }
 
       it { fails }
     end
 
     describe :session_cookie_value do
-      subject { -> { gigya.session_cookie_value } }
+      subject { gigya.session_cookie_value }
 
       it { fails }
     end
 
     def fails
-      is_expected.to raise_error(Ruze::Error, 'Error in session_cookie_value: invalid loginID or password')
+      expect { subject }.to raise_error(Ruze::Error, 'Error in session_cookie_value: invalid loginID or password')
     end
   end
 
@@ -56,25 +56,25 @@ RSpec.describe Ruze::Gigya do
     let(:password) { nil }
 
     describe :jwt do
-      subject { -> { gigya.jwt } }
+      subject { gigya.jwt }
 
       it { fails }
     end
 
     describe :person_id do
-      subject { -> { gigya.person_id } }
+      subject { gigya.person_id }
 
       it { fails }
     end
 
     describe :session_cookie_value do
-      subject { -> { gigya.session_cookie_value } }
+      subject { gigya.session_cookie_value }
 
       it { fails }
     end
 
     def fails
-      is_expected.to raise_error(ArgumentError)
+      expect { subject }.to raise_error(ArgumentError)
     end
   end
 end
