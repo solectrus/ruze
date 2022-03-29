@@ -67,6 +67,7 @@ RSpec.describe Ruze::Kamereon do
       it 'has keys' do
         expect(subject.keys).to match_array(
           %w[
+            gpsDirection
             gpsLatitude
             gpsLongitude
             lastUpdateTime

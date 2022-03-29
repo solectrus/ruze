@@ -62,6 +62,7 @@ car.cockpit
 
 car.location
 # {
+#       "gpsDirection" => nil,
 #        "gpsLatitude" => 50.12345678,
 #       "gpsLongitude" => 6.12345678,
 #     "lastUpdateTime" => "2021-03-12T11:43:18Z"
