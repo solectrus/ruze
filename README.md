@@ -28,8 +28,10 @@ You need two API keys. Both can be obtained from Renault; they're the same for e
 
 ```bash
 export GIGYA_API_KEY=3_7P...
-export KAMEREON_API_KEY=Ae9F...
+export KAMEREON_API_KEY=VAX7...
 ```
+
+Hint: https://gist.github.com/mountbatt/772e4512089802a2aa2622058dd1ded7
 
 
 ## Usage
