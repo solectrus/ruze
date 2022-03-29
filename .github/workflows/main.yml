@@ -3,16 +3,16 @@ name: Test
 on: [push,pull_request]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ '2.7', '3.0' ]
+        ruby: [ '2.7', '3.0', '3.1' ]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup Ruby ${{ matrix.ruby }}
       uses: ruby/setup-ruby@v1
