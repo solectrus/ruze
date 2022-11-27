@@ -1,4 +1,6 @@
 # RuZE
+[![Test](https://github.com/solectrus/ruze/actions/workflows/main.yml/badge.svg)](https://github.com/solectrus/ruze/actions/workflows/main.yml)
+[![wakatime](https://wakatime.com/badge/user/697af4f5-617a-446d-ba58-407e7f3e0243/project/60f52429-f36d-4981-84e7-930c71a92d95.svg)](https://wakatime.com/badge/user/697af4f5-617a-446d-ba58-407e7f3e0243/project/60f52429-f36d-4981-84e7-930c71a92d95)
 
 Unofficial Ruby client to access the API of Renault ZE. Get vehicle data like mileage, charging state and GPS location.
 
