@@ -26,14 +26,13 @@ Or install it yourself as:
 
 ## Obtaining API keys
 
-You need two API keys. Both can be obtained from Renault; they're the same for everyone and shouldn't be confused with your email/password credentials. Since the API is apparently not intended for the public, I do not want to publish the API keys here. It's your turn to find them via Google, then store them as ENV variables:
+You need two API keys. Both can be obtained from Renault; they're the same for everyone and shouldn't be confused with your email/password credentials. Since the API is apparently not intended for the public, I do not want to publish the API keys here. It's your turn to find them, then store them as ENV variables:
 
 ```bash
-export GIGYA_API_KEY=3_7P...
-export KAMEREON_API_KEY=VAX7...
+export GIGYA_API_KEY=...
+export KAMEREON_API_KEY=...
 ```
 
-Hint: https://gist.github.com/mountbatt/772e4512089802a2aa2622058dd1ded7
 
 
 ## Usage
