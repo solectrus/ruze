@@ -46,7 +46,7 @@ module Ruze
 
     def cockpit
       @cockpit ||= return_from get(
-        uri("/accounts/#{account_id}/kamereon/kca/car-adapter/v2/cars/#{vin}/cockpit?country=#{COUNTRY}"),
+        uri("/accounts/#{account_id}/kamereon/kca/car-adapter/v1/cars/#{vin}/cockpit?country=#{COUNTRY}"),
         headers
       ), keys: %w[data attributes]
     end

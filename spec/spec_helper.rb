@@ -58,6 +58,7 @@ VCR.configure do |config|
   sensitive_responses = {
     'idpId'        => '<IDP_ID>',
     'partyId'      => '<PARTY_ID>',
+    'trackingId'   => '<TRACKING_ID>',
     'gpsLatitude'  => 52.000,
     'gpsLongitude' => 10.000,
     'totalMileage' => 30_000,
