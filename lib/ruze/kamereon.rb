@@ -56,6 +56,10 @@ module Ruze
         uri("/accounts/#{account_id}/kamereon/kca/car-adapter/v1/cars/#{vin}/location?country=#{COUNTRY}"),
         headers
       ), keys: %w[data attributes]
+    rescue Error => e
+      raise e unless e.message.include?('404')
+
+      {}
     end
 
     private

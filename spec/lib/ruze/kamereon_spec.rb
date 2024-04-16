@@ -64,16 +64,17 @@ RSpec.describe Ruze::Kamereon do
 
       it { is_expected.to be_a(Hash) }
 
-      it 'has keys' do
-        expect(subject.keys).to match_array(
-          %w[
-            gpsDirection
-            gpsLatitude
-            gpsLongitude
-            lastUpdateTime
-          ]
-        )
-      end
+      # May not be available for all vehicles, so we can't test for keys
+      # it 'has keys' do
+      #   expect(subject.keys).to match_array(
+      #     %w[
+      #       gpsDirection
+      #       gpsLatitude
+      #       gpsLongitude
+      #       lastUpdateTime
+      #     ]
+      #   )
+      # end
     end
   end
 
