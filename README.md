@@ -106,7 +106,7 @@ This project is not affiliated with, endorsed by, or connected to Renault. I acc
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
 
-Copyright (c) 2021-2024 Georg Ledermann, released under the AGPL-3.0 License
+Copyright (c) 2021-2025 Georg Ledermann, released under the AGPL-3.0 License
 
 ## Code of Conduct
 
