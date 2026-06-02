@@ -20,3 +20,6 @@ gem 'dotenv'
 
 # Automatic Ruby code style checking tool. (https://github.com/rubocop/rubocop)
 gem 'rubocop'
+
+# Interactive Ruby console for bin/console (no longer a default gem since Ruby 4.0)
+gem 'irb'

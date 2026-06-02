@@ -52,13 +52,13 @@ module Ruze
 
     def return_from(response, keys:)
       unless response.is_a?(Net::HTTPOK)
-        caller = caller_locations(1, 1)[0].label
+        caller = caller_locations(1, 1)[0].base_label
         raise Error, "Error in #{caller}: #{response.message} (#{response.code})"
       end
 
       json = JSON.parse(response.body)
       unless json['errorCode']&.zero?
-        caller = caller_locations(1, 1)[0].label
+        caller = caller_locations(1, 1)[0].base_label
         raise Error, "Error in #{caller}: #{json['errorDetails']}"
       end
 
