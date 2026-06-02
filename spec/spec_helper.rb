@@ -2,12 +2,25 @@ require 'ruze'
 require 'vcr'
 require 'dotenv/load'
 
+module TrustedDeviceHelper
+  # A Ruze::Device seeded with the trusted gmid/ucid from the environment, so
+  # specs log in via the trusted device instead of hitting socialize.getIDs.
+  def trusted_device
+    Ruze::Device.new(
+      gmid: ENV.fetch('RUZE_GMID', 'gmid.test'),
+      ucid: ENV.fetch('RUZE_UCID', 'ucid.test')
+    )
+  end
+end
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
 
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
+
+  config.include TrustedDeviceHelper
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
@@ -40,6 +53,28 @@ VCR.configure do |config|
 
   config.configure_rspec_metadata!
 
+  # Net::HTTP returns response bodies as ASCII-8BIT (reinterpret as UTF-8, else
+  # String#include? raises Encoding::CompatibilityError later) and scrub volatile
+  # secrets that flow across requests/responses and would slip past key-based
+  # filters: JWTs, Gigya session/reg tokens and device ids.
+  scrub = lambda do |string|
+    return string if string.nil?
+
+    string
+      .force_encoding('UTF-8')
+      .gsub(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/, '<JWT>')
+      .gsub(/st2\.s\.[A-Za-z0-9._-]+/, '<TOKEN>')
+      .gsub(/gmid\.ver4\.[A-Za-z0-9._-]+/, '<GMID>')
+  end
+
+  config.before_record do |interaction|
+    interaction.request.body = scrub.call(interaction.request.body)
+    interaction.response.body = scrub.call(interaction.response.body)
+    [interaction.request.headers, interaction.response.headers].each do |headers|
+      headers.each { |name, values| headers[name] = Array(values).map { |v| scrub.call(v) } }
+    end
+  end
+
   sensitive_environment_variables = %w[
     GIGYA_API_KEY
     KAMEREON_API_KEY
@@ -48,6 +83,8 @@ VCR.configure do |config|
     RENAULT_PERSON_ID
     RENAULT_VIN
     RENAULT_ACCOUNT_ID
+    RUZE_GMID
+    RUZE_UCID
   ]
   sensitive_environment_variables.each do |key_name|
     config.filter_sensitive_data("<#{key_name}>") { CGI.escape(ENV.fetch(key_name)) }
@@ -56,6 +93,11 @@ VCR.configure do |config|
 
   # Hide some sensitive data from responses
   sensitive_responses = {
+    'UID'          => '<UID>',
+    'UIDSignature' => '<UID_SIGNATURE>',
+    'originUserId'  => '<ORIGIN_USER_ID>',
+    'mdmId'         => '<MDM_ID>',
+    'externalId'    => '<EXTERNAL_ID>',
     'idpId'        => '<IDP_ID>',
     'partyId'      => '<PARTY_ID>',
     'trackingId'   => '<TRACKING_ID>',

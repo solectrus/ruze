@@ -38,27 +38,25 @@ export KAMEREON_API_KEY=...
 ## Usage
 
 ```ruby
-car = Ruze::Car.new('me@example.com', 'my-password')
+car = Ruze::Car.new('john@example.com', 'my-password')
 
 car.battery
 # {
-#                      "timestamp" => "2021-03-13T09:59:12Z",
-#                   "batteryLevel" => 66,
-#             "batteryTemperature" => 20,
-#                "batteryAutonomy" => 194,
-#                "batteryCapacity" => 0,
-#         "batteryAvailableEnergy" => 33,
-#                     "plugStatus" => 0,
-#                 "chargingStatus" => 0.0,
-#          "chargingRemainingTime" => 55,
-#     "chargingInstantaneousPower" => 0.0
+#                                   "timestamp" => "2026-03-13T09:59:12Z",
+#                                "batteryLevel" => 66,
+#                             "batteryAutonomy" => 194,
+#                                  "plugStatus" => 0,
+#                              "chargingStatus" => 0.0,
+#                       "chargingRemainingTime" => 55,
+#     "chargingRemainingTimeLastUpdateDateTime" => "2026-03-13T09:30:00Z"
 # }
 
 car.cockpit
 # {
 #     "fuelAutonomy" => 0.0,
 #     "fuelQuantity" => 0.0,
-#     "totalMileage" => 12345.67
+#     "totalMileage" => 12345.67,
+#        "timestamp" => "2026-03-13T09:59:12Z"
 # }
 
 car.location
@@ -66,9 +64,49 @@ car.location
 #       "gpsDirection" => nil,
 #        "gpsLatitude" => 50.12345678,
 #       "gpsLongitude" => 6.12345678,
-#     "lastUpdateTime" => "2021-03-12T11:43:18Z"
+#     "lastUpdateTime" => "2026-03-12T11:43:18Z"
 # }
 ```
+
+
+## Two-factor authentication
+
+Renault enforces two-factor authentication (2FA) on Gigya accounts, so a
+password alone is no longer enough to log in. RuZE handles this by establishing
+a *trusted device* once: after a single email verification, Renault remembers
+the device for about 30 days, during which logins succeed without a prompt.
+
+### One-time setup
+
+Trigger a verification code, confirm it with the 6-digit code Renault emails to
+your account, then read the resulting trusted-device pair:
+
+```ruby
+gigya = Ruze::Gigya.new('john@example.com', 'my-password')
+
+gigya.request_verification_code # emails a 6-digit code (returns nil if none is needed)
+
+gigya.verify_code('123456')
+
+gmid = gigya.device.gmid
+ucid = gigya.device.ucid
+# Store this gmid/ucid pair somewhere durable (env vars, a file, a database).
+```
+
+`Ruze::Device` keeps the pair in memory only, so persisting it is up to you. The
+pair stays valid across renewals, so you store it once.
+
+### Normal usage
+
+Seed a device with your stored pair and `Ruze::Car` logs in without prompting:
+
+```ruby
+device = Ruze::Device.new(gmid: gmid, ucid: ucid)
+car = Ruze::Car.new('john@example.com', 'my-password', device: device)
+```
+
+When the device is missing or has expired, login raises
+`Ruze::TwoFactorRequired` — repeat the one-time setup to renew it.
 
 
 ## Background

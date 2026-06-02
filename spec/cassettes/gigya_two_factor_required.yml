@@ -1,0 +1,109 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://socialize.eu1.gigya.com/socialize.getIDs
+    body:
+      encoding: UTF-8
+      string: apiKey=<GIGYA_API_KEY>&format=json
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - socialize.eu1.gigya.com
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/javascript; charset=utf-8
+      Date:
+      - Tue, 02 Jun 2026 06:56:33 GMT
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '629'
+      P3p:
+      - CP="IDC COR PSA DEV ADM OUR IND ONL"
+      X-Error-Code:
+      - '0'
+      X-Soa:
+      - true, Gator
+      X-Server:
+      - gator-eu1-prod-67d85c54fc-rh49t
+      X-Callid:
+      - '019e871eaa6776c68aa001ad05edfdee'
+      X-Robots-Tag:
+      - none
+    body:
+      encoding: UTF-8
+      string: "{\r\n  \"callId\": \"019e871eaa6776c68aa001ad05edfdee\",\r\n  \"errorCode\":
+        0,\r\n  \"apiVersion\": 2,\r\n  \"statusCode\": 200,\r\n  \"statusReason\":
+        \"OK\",\r\n  \"time\": \"2026-06-02T06:56:34.420Z\",\r\n  \"gmid\": \"<GMID>\",\r\n
+        \ \"gcid\": \"<GMID>\",\r\n  \"ucid\": \"<UCID>\",\r\n  \"refreshTime\": 1781247394418\r\n}"
+  recorded_at: Tue, 02 Jun 2026 06:56:34 GMT
+- request:
+    method: post
+    uri: https://accounts.eu1.gigya.com/accounts.login
+    body:
+      encoding: UTF-8
+      string: apiKey=<GIGYA_API_KEY>&loginID=<RENAULT_EMAIL>&password=<RENAULT_PASSWORD>&gmid=<GMID>&ucid=<UCID>&format=json
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - accounts.eu1.gigya.com
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - gmid=<GMID>; ucid=<UCID>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/javascript; charset=utf-8
+      Date:
+      - Tue, 02 Jun 2026 06:56:34 GMT
+      Cache-Control:
+      - private
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '653'
+      P3p:
+      - CP="IDC COR PSA DEV ADM OUR IND ONL"
+      X-Error-Code:
+      - '403101'
+      X-Soa:
+      - true, Gator
+      X-Server:
+      - gator-eu1-prod-67d85c54fc-vq4r2
+      X-Callid:
+      - '019e871eab7d75c3a2fbc58750b14ce4'
+      X-Robots-Tag:
+      - none
+    body:
+      encoding: UTF-8
+      string: "{\r\n  \"callId\": \"019e871eab7d75c3a2fbc58750b14ce4\",\r\n  \"errorCode\":
+        403101,\r\n  \"errorDetails\": \"Pending Two-Factor Authentication\",\r\n
+        \ \"errorMessage\": \"Account Pending TFA Verification\",\r\n  \"apiVersion\":
+        2,\r\n  \"statusCode\": 403,\r\n  \"statusReason\": \"Forbidden\",\r\n  \"time\":
+        \"2026-06-02T06:56:34.844Z\",\r\n  \"UID\": \"<UID>\",\r\n  \"regToken\":
+        \"<TOKEN>\",\r\n  \"sessionInfo\": {\r\n    \"expires_in\": \"3600\"\r\n  }\r\n}"
+  recorded_at: Tue, 02 Jun 2026 06:56:34 GMT
+recorded_with: VCR 6.4.0

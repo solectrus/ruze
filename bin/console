@@ -1,14 +1,24 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
+require 'dotenv/load'
 require 'ruze'
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
-
-# (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
+# Convenience for experimenting against the real API, using the credentials and
+# trusted device from your .env (RENAULT_EMAIL, RENAULT_PASSWORD, GIGYA_API_KEY,
+# KAMEREON_API_KEY, RUZE_GMID, RUZE_UCID):
+#
+#   car.battery
+#   car.cockpit
+#   car.location
+#
+def car
+  Ruze::Car.new(
+    ENV.fetch('RENAULT_EMAIL'),
+    ENV.fetch('RENAULT_PASSWORD'),
+    device: Ruze::Device.new(gmid: ENV.fetch('RUZE_GMID', nil), ucid: ENV.fetch('RUZE_UCID', nil))
+  )
+end
 
 require 'irb'
 IRB.start(__FILE__)

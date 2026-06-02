@@ -1,5 +1,5 @@
 RSpec.describe Ruze::Gigya do
-  subject(:gigya) { Ruze::Gigya.new(email, password) }
+  subject(:gigya) { Ruze::Gigya.new(email, password, device: trusted_device) }
 
   context 'with valid email/password', vcr: { cassette_name: 'gigya_valid_credentials' } do
     let(:email)    { ENV.fetch('RENAULT_EMAIL') }
@@ -48,6 +48,22 @@ RSpec.describe Ruze::Gigya do
 
     def fails
       expect { subject }.to raise_error(Ruze::Error, 'Error in session_cookie_value: invalid loginID or password')
+    end
+  end
+
+  context 'with an untrusted device', vcr: { cassette_name: 'gigya_two_factor_required' } do
+    subject(:gigya) { Ruze::Gigya.new(email, password, device: untrusted_device) }
+
+    let(:email)    { ENV.fetch('RENAULT_EMAIL') }
+    let(:password) { ENV.fetch('RENAULT_PASSWORD') }
+    let(:untrusted_device) { Ruze::Device.new }
+
+    describe :session_cookie_value do
+      subject { gigya.session_cookie_value }
+
+      it 'raises TwoFactorRequired' do
+        expect { subject }.to raise_error(Ruze::TwoFactorRequired)
+      end
     end
   end
 

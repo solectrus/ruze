@@ -1,5 +1,5 @@
 RSpec.describe Ruze::Car do
-  subject(:car) { Ruze::Car.new(email, password) }
+  subject(:car) { Ruze::Car.new(email, password, device: trusted_device) }
 
   context 'with valid email/password' do
     let(:email)    { ENV.fetch('RENAULT_EMAIL') }

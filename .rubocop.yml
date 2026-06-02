@@ -3,6 +3,9 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
 
+Metrics/ClassLength:
+  Max: 170
+
 Metrics/MethodLength:
   Max: 20
 

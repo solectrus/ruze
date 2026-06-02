@@ -4,7 +4,7 @@ RSpec.describe Ruze::Kamereon do
   context 'with valid credentials', vcr: { cassette_name: 'kamereon_valid_credentials' } do
     let(:person_id)   { gigya.person_id }
     let(:gigya_token) { gigya.jwt }
-    let(:gigya)       { Ruze::Gigya.new(email, password) }
+    let(:gigya)       { Ruze::Gigya.new(email, password, device: trusted_device) }
     let(:email)       { ENV.fetch('RENAULT_EMAIL') }
     let(:password)    { ENV.fetch('RENAULT_PASSWORD') }
 
@@ -29,12 +29,9 @@ RSpec.describe Ruze::Kamereon do
         expect(subject.keys).to match_array(
           %w[
             batteryAutonomy
-            batteryAvailableEnergy
-            batteryCapacity
             batteryLevel
-            batteryTemperature
-            chargingInstantaneousPower
             chargingRemainingTime
+            chargingRemainingTimeLastUpdateDateTime
             chargingStatus
             plugStatus
             timestamp
@@ -53,6 +50,7 @@ RSpec.describe Ruze::Kamereon do
           %w[
             fuelAutonomy
             fuelQuantity
+            timestamp
             totalMileage
           ]
         )
