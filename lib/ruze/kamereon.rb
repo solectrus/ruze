@@ -6,14 +6,19 @@ module Ruze
     BASE_URL = 'https://api-wired-prod-1-euw1.wrd-aws.com/commerce/v1'.freeze
     COUNTRY  = 'DE'.freeze
 
+    # gigya_token is a String or a callable that returns a valid token
     def initialize(person_id, gigya_token, vin = nil)
-      raise ArgumentError unless person_id.is_a?(String) && gigya_token.is_a?(String)
+      raise ArgumentError unless person_id.is_a?(String) && (gigya_token.is_a?(String) || gigya_token.respond_to?(:call))
 
       @person_id = person_id
       @gigya_token = gigya_token
       @vin = vin
     end
-    attr_reader :person_id, :gigya_token
+    attr_reader :person_id
+
+    def gigya_token
+      @gigya_token.respond_to?(:call) ? @gigya_token.call : @gigya_token
+    end
 
     def account_id
       accounts.first['accountId']
@@ -62,6 +67,12 @@ module Ruze
       {}
     end
 
+    # Forgets the vehicle data, but keeps account and VIN
+    def reload
+      @battery = @cockpit = @location = nil
+      self
+    end
+
     private
 
     def api_key
@@ -90,7 +101,8 @@ module Ruze
     def return_from(response, keys:)
       unless response.is_a?(Net::HTTPOK)
         caller = caller_locations(1, 1)[0].base_label
-        raise Error, "Error in #{caller}: #{response.message} (#{response.code})"
+        error = %w[401 403].include?(response.code) ? AuthenticationError : Error
+        raise error, "Error in #{caller}: #{response.message} (#{response.code})"
       end
 
       json = JSON.parse(response.body)

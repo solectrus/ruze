@@ -11,6 +11,59 @@ RSpec.describe Ruze::Gigya do
       it { is_expected.to be_a(String) }
     end
 
+    describe 'renewing the JWT' do
+      before { allow(gigya).to receive(:post).and_call_original }
+
+      def jwt_at(time)
+        allow(gigya).to receive(:now).and_return(time)
+        gigya.jwt
+      end
+
+      def jwt_requests
+        have_received(:post).with(a_string_ending_with('accounts.getJWT'), anything)
+      end
+
+      it 'reuses the JWT until shortly before it expires' do
+        jwt_at(1000)
+        jwt_at(1839)
+
+        expect(gigya).to jwt_requests.once
+      end
+
+      it 'fetches a new JWT shortly before the old one expires' do
+        jwt_at(1000)
+        jwt_at(1840)
+
+        expect(gigya).to jwt_requests.twice
+      end
+    end
+
+    describe 'a rejected token' do
+      before do
+        allow(gigya).to receive_messages(
+          session_cookie_value: 'expired',
+          post: instance_double(Net::HTTPForbidden, body: '{"errorCode":403005,"errorMessage":"Unauthorized user"}')
+        )
+      end
+
+      it 'raises AuthenticationError' do
+        expect { gigya.jwt }.to raise_error(Ruze::AuthenticationError, 'Error in jwt: Unauthorized user')
+      end
+    end
+
+    describe 'logging' do
+      subject(:gigya) { Ruze::Gigya.new(email, password, device: trusted_device, logger:) }
+
+      let(:logger) { spy('logger') }
+
+      it 'logs the login and the token' do
+        gigya.jwt
+
+        expect(logger).to have_received(:info).with('Logging in').ordered
+        expect(logger).to have_received(:info).with('Fetching new token').ordered
+      end
+    end
+
     describe :person_id do
       subject { gigya.person_id }
 

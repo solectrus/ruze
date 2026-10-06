@@ -68,6 +68,33 @@ car.location
 # }
 ```
 
+### Repeated queries
+
+A `Ruze::Car` keeps the data it fetched. To get new data, call `reload`
+and query the car again:
+
+```ruby
+loop do
+  car.reload
+  puts car.battery['batteryLevel']
+  sleep 600
+end
+```
+
+Use one car for all queries. The car logs in once and keeps the login. It
+gets a new token from Renault when the old token expires (after 15 minutes).
+If Renault rejects the login later (HTTP 401 or 403), the car logs in again
+and repeats the query once. Other errors, like a failing server, raise
+`Ruze::Error` without a new login. A new `Ruze::Car` for each query makes 4 more requests, because
+it logs in again and looks up the account and the VIN.
+
+To log each login and each new token, give a logger. Any object with an
+`info` method works:
+
+```ruby
+car = Ruze::Car.new(email, password, logger: Logger.new($stdout))
+```
+
 
 ## Two-factor authentication
 

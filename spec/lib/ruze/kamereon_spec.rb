@@ -14,6 +14,21 @@ RSpec.describe Ruze::Kamereon do
       it { is_expected.to be_a(String) }
     end
 
+    describe :reload do
+      subject(:kamereon) { Ruze::Kamereon.new(person_id, -> { gigya.jwt }) }
+
+      before { allow(kamereon).to receive(:get).and_call_original }
+
+      it 'fetches the vehicle data again, but not account and VIN' do
+        kamereon.battery
+        kamereon.reload
+        kamereon.battery
+
+        expect(kamereon).to have_received(:get).with(having_attributes(path: a_string_ending_with('/battery-status')), anything).twice
+        expect(kamereon).to have_received(:get).exactly(4).times
+      end
+    end
+
     describe :vin do
       subject { kamereon.vin }
 
@@ -111,7 +126,7 @@ RSpec.describe Ruze::Kamereon do
     end
 
     def fails
-      expect { subject }.to raise_error(Ruze::Error, 'Error in accounts: Unauthorized (401)')
+      expect { subject }.to raise_error(Ruze::AuthenticationError, 'Error in accounts: Unauthorized (401)')
     end
   end
 end

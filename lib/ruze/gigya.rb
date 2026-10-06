@@ -8,12 +8,19 @@ module Ruze
     BASE_URL      = 'https://accounts.eu1.gigya.com'.freeze
     SOCIALIZE_URL = 'https://socialize.eu1.gigya.com'.freeze
 
-    def initialize(email, password, device: Device.new)
+    # Lifetime of a JWT in seconds. A new one is fetched shortly before the
+    # old one expires.
+    JWT_LIFETIME  = 900
+    JWT_MARGIN    = 60
+
+    # logger is any object with #info
+    def initialize(email, password, device: Device.new, logger: nil)
       raise ArgumentError unless email.is_a?(String) && password.is_a?(String)
 
       @email = email
       @password = password
       @device = device
+      @logger = logger
     end
     attr_reader :email, :password, :device
 
@@ -25,13 +32,20 @@ module Ruze
     end
 
     def jwt
-      @jwt ||= dig_from post(
+      return @jwt if @jwt && now < @jwt_expires_at
+
+      login_token = session_cookie_value
+      @logger&.info('Fetching new token')
+      fetched_at = now
+      @jwt = dig_from post(
         "#{BASE_URL}/accounts.getJWT",
         { 'apiKey'      => api_key,
-          'login_token' => session_cookie_value,
+          'login_token' => login_token,
           'fields'      => 'data.personId,data.gigyaDataCenter',
-          'expiration'  => 900 }
+          'expiration'  => JWT_LIFETIME }
       ), label: 'jwt', keys: %w[id_token]
+      @jwt_expires_at = fetched_at + JWT_LIFETIME - JWT_MARGIN
+      @jwt
     end
 
     # Logs in using the trusted device and returns the session cookie value.
@@ -88,6 +102,7 @@ module Ruze
     private
 
     def login(ids = device_ids)
+      @logger&.info('Logging in')
       json = parse post(
         "#{BASE_URL}/accounts.login",
         login_params(ids), cookie: cookie(ids)
@@ -191,6 +206,10 @@ module Ruze
       { gmid: json['gmid'], ucid: json['ucid'] }
     end
 
+    def now
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    end
+
     def cookie(ids)
       "gmid=#{ids[:gmid]}; ucid=#{ids[:ucid]}"
     end
@@ -215,9 +234,14 @@ module Ruze
 
     def dig_from(response, label:, keys:)
       json = parse(response)
-      raise Error, "Error in #{label}: #{error_detail(json)}" unless json['errorCode']&.zero?
+      raise error_class(json), "Error in #{label}: #{error_detail(json)}" unless json['errorCode']&.zero?
 
       json.dig(*keys)
+    end
+
+    # The first three digits of a Gigya error code are the HTTP status
+    def error_class(json)
+      json['errorCode'].to_s.start_with?('401', '403') ? AuthenticationError : Error
     end
 
     def error_detail(json)
